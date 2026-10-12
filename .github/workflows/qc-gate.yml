@@ -12,7 +12,54 @@ on:
         default: ""
 
 jobs:
+  ghcr-access:
+    name: Verify GHCR access
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Check PAT and image manifest (no secret output)
+        env:
+          GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:d4d447f94f362d21b0199dfa18196f15c1fa96fa6e11935e1b5772c7fdf1adea
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, sys
+          import urllib.error, urllib.request
+          secret = os.environ.get("GHCR_PULL_TOKEN", "").strip()
+          if not secret:
+              sys.exit("GHCR_PULL_TOKEN is missing in this repository/run")
+          print("GHCR_PULL_TOKEN is present (value withheld)")
+          basic = base64.b64encode((os.environ["GHCR_USER"] + ":" + secret).encode()).decode()
+          def fetch(url, headers, label):
+              try:
+                  response = urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30)
+              except urllib.error.HTTPError as error:
+                  sys.exit(f"{label}: HTTP {error.code}; check PAT read:packages and package access")
+              except urllib.error.URLError:
+                  sys.exit(f"{label}: network error")
+              print(f"{label}: HTTP {response.status}")
+              return response
+          response = fetch("https://ghcr.io/token?service=ghcr.io&scope=repository:minhduc-it/qc-agent:pull", {"Authorization": "Basic " + basic}, "GHCR token request")
+          bearer = json.load(response)["token"]
+          headers = {"Authorization": "Bearer " + bearer, "Accept": "application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.list.v2+json, application/vnd.docker.distribution.manifest.v2+json"}
+          digest = os.environ["IMAGE"].split("@", 1)[1]
+          response = fetch("https://ghcr.io/v2/minhduc-it/qc-agent/manifests/" + digest, headers, "Pinned manifest")
+          body = response.read()
+          actual = "sha256:" + hashlib.sha256(body).hexdigest()
+          if actual != digest:
+              sys.exit("Registry response digest does not match pinned image")
+          print("Pinned digest verified:", actual)
+          index = json.loads(body)
+          linux = [item for item in index.get("manifests", []) if item.get("platform", {}).get("os") == "linux" and item.get("platform", {}).get("architecture") == "amd64"]
+          if linux:
+              fetch("https://ghcr.io/v2/minhduc-it/qc-agent/manifests/" + linux[0]["digest"], headers, "Linux/amd64 manifest").close()
+          PY
+
   qc:
+    needs: ghcr-access
     permissions:               # quyền TỐI THIỂU; workflow tái sử dụng không xin thêm
       contents: read
       checks: write            # Check Run "qc-agent / full-stack-fastapi-template"
