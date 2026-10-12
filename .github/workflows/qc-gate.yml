@@ -87,7 +87,7 @@ jobs:
       workers: ${{ inputs.workers }}   # chạy tay: danh sách worker (rỗng = theo policy); PR: luôn rỗng
       sut_dockerfile: ".qc-agent/Dockerfile.ci"
       sut_context: "."
-      sut_health_path: "/api/v1/utils/health-check/"
+      sut_health_path: "/api/v1/openapi.json" # Scenario C: readiness must not mask the deliberate health regression
       sut_env: |
         PROJECT_NAME=QC FastAPI CI
         FRONTEND_HOST=http://sut:8000

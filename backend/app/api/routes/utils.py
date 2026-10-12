@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic.networks import EmailStr
 
 from app.api.deps import get_current_active_superuser
@@ -28,4 +28,4 @@ def test_email(email_to: EmailStr) -> Message:
 
 @router.get("/health-check/")
 async def health_check() -> bool:
-    return True
+    raise HTTPException(status_code=500, detail="S4-06 deliberate regression")
