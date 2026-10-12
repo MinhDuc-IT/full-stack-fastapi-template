@@ -6,3 +6,6 @@ backend/app/frontend/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Thông tin và artifact kiểm thử QC-Agent local
+/.qc-agent/local/
