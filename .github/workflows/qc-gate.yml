@@ -107,3 +107,6 @@ jobs:
       GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
       SUT_SECRET_ENV: ${{ secrets.SUT_SECRET_ENV }}
       SUT_DB_SECRET_ENV: ${{ secrets.SUT_DB_SECRET_ENV }}
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
