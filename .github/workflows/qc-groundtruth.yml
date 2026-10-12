@@ -10,12 +10,17 @@ on:
         description: "PRD cần sinh Ground-Truth (đường dẫn tương đối, hoặc glob)"
         required: true
         default: "docs/prd/**"
+      allow_llm:
+        description: "Chỉ bật sau khi được phép gửi PRD/OpenAPI và đã chốt ngân sách"
+        type: boolean
+        default: false
   pull_request:
     paths:
       - ".qc-agent/**"
 
 jobs:
   groundtruth:
+    if: ${{ github.event_name == 'pull_request' || inputs.allow_llm == true }}
     permissions:               # quyền TỐI THIỂU: job validate trong workflow tái sử dụng tự hạ xuống chỉ-đọc
       contents: write          # đẩy nhánh qc-agent/gt/<prd-id>
       pull-requests: write     # mở PR
@@ -23,6 +28,8 @@ jobs:
     uses: Muteen-Felix/QC-Agent/.github/workflows/qc-groundtruth.reusable.yml@4183af5c3365e493a1d339a1c73e9485856c0f55
     with:
       project: full-stack-fastapi-template
+      base_branch: master
+      openapi: docs/openapi.json
       image: ghcr.io/minhduc-it/qc-agent@sha256:95c55978ec52316e648c07c6f11ff780a930db3950d285504473d43965c6c785
       prd_path: ${{ inputs.prd_path || 'docs/prd/**' }}
       # Dùng Gemini thay Claude: bỏ comment các dòng dưới và đặt secret GEMINI_API_KEY. Chỉ khoá của nhà cung cấp được chọn đi vào container.
@@ -36,4 +43,8 @@ jobs:
       # timeout_minutes: 60
       # agent_model: claude-sonnet-5-5
       # agent_max_cost_usd: "3"                                # trần chi phí ước tính cho một PRD
-    secrets: inherit
+    secrets:
+      GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      qc_bot_token: ${{ secrets.qc_bot_token }}

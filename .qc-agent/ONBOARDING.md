@@ -1,7 +1,25 @@
 # Onboarding full-stack-fastapi-template
 
+## Cập nhật S4-06 ngày 2026-10-12
+
+Baseline đã vá dependency: Trivy 0 finding; gate default PASSED_WITH_WARNINGS, exit 0, chỉ còn Low coverage.
+Đã chuẩn hóa tuple exception cho parser Python 3.11; worker coverage-debt không còn lỗi cú pháp.
+20 test login/items pass; harness S4-05 5 test noteboard + 6 test Node pass (kiểm image bằng nội dung Python).
+C local BLOCKED; D local PASSED_WITH_WARNINGS; E local chỉ semgrep và PASSED. Đây chưa phải bằng chứng GitHub A–E.
+LLM vẫn chưa bật; GT có guard allow_llm=false. B chờ teammate. D Jira giả tạo 2 ticket thay vì 1: cần sửa riêng trước Jira thật/10 lượt.
+
+- Runbook: [docs/qc-s4-06.md](../docs/qc-s4-06.md).
+- Baseline report: [report.md](local/runs/s4-06-baseline-final/report.md).
+- Kết quả chuẩn bị: [preparation-results.json](local/s4-06/preparation-results.json).
+- Intake/patch C,D/ledger nằm trong local/s4-06, Git bỏ qua.
+- Image dùng cho workflow: ghcr.io/minhduc-it/qc-agent@sha256:95c55978ec52316e648c07c6f11ff780a930db3950d285504473d43965c6c785 (Private; GHCR_PULL_TOKEN).
+
+Phần dưới là lịch sử trước bản vá baseline, không phải trạng thái hiện tại.
+
+## Lịch sử onboarding ban đầu
+
 Đã chạy thử local ngày 2026-10-12. QA owner: @MinhDuc-IT.
-Image QC-Agent đã publish: `ghcr.io/minhduc-it/qc-agent@sha256:d4d447f94f362d21b0199dfa18196f15c1fa96fa6e11935e1b5772c7fdf1adea`. Manifest đã xác minh trên GHCR, pull ẩn danh thành công; chưa chạy GitHub Actions.
+Image QC-Agent đã publish: `ghcr.io/minhduc-it/qc-agent@sha256:d4d447f94f362d21b0199dfa18196f15c1fa96fa6e11935e1b5772c7fdf1adea`. Manifest đã xác minh bằng credentials; package Private cần PAT; chưa chạy GitHub Actions.
 
 ## Kết quả thật
 

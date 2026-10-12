@@ -12,5 +12,11 @@
     "test:ui": "bun run --filter frontend test:ui",
     "email:dev": "bun run --filter emails dev",
     "email:export": "bun run --filter emails export"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.12",
+    "engine.io": "6.6.10",
+    "fast-uri": "3.1.8",
+    "source-map-js": "1.2.2"
   }
 }

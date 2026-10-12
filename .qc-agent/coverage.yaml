@@ -1,0 +1,9 @@
+# Coverage-debt cần biết đường dẫn test trong monorepo SUT.
+test_globs:
+  - .qc-agent/suites/**
+  - .qc-agent/ground-truth/**
+  - .qc-agent/perf/**
+  - .qc-agent/midscene/**
+  - .qc-agent/integration/*.spec.mjs
+  - backend/tests/**
+  - frontend/tests/**
