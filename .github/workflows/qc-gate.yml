@@ -28,7 +28,10 @@ jobs:
           python3 - <<'PY'
           import base64, hashlib, json, os, sys
           import urllib.error, urllib.request
-          secret = os.environ.get("GHCR_PULL_TOKEN", "").strip()
+          raw_secret = os.environ.get("GHCR_PULL_TOKEN", "")
+          secret = raw_secret.strip()
+          if raw_secret != secret:
+              sys.exit("GHCR_PULL_TOKEN contains surrounding whitespace; save only the PAT value")
           if not secret:
               sys.exit("GHCR_PULL_TOKEN is missing in this repository/run")
           print("GHCR_PULL_TOKEN is present (value withheld)")
@@ -57,6 +60,18 @@ jobs:
           if linux:
               fetch("https://ghcr.io/v2/minhduc-it/qc-agent/manifests/" + linux[0]["digest"], headers, "Linux/amd64 manifest").close()
           PY
+      - name: Log in using verified PAT
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PULL_TOKEN }}
+      - name: Pull exact image using Docker in caller job
+        env:
+          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:95c55978ec52316e648c07c6f11ff780a930db3950d285504473d43965c6c785
+        run: |
+          docker version
+          docker pull "$IMAGE"
 
   qc:
     needs: ghcr-access
@@ -88,4 +103,7 @@ jobs:
         POSTGRES_DB=app
         POSTGRES_USER=app
       sut_db_ready_cmd: pg_isready -h 127.0.0.1 -U app -d app
-    secrets: inherit
+    secrets:
+      GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+      SUT_SECRET_ENV: ${{ secrets.SUT_SECRET_ENV }}
+      SUT_DB_SECRET_ENV: ${{ secrets.SUT_DB_SECRET_ENV }}
