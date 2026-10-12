@@ -23,7 +23,7 @@ jobs:
     uses: Muteen-Felix/QC-Agent/.github/workflows/qc-groundtruth.reusable.yml@4183af5c3365e493a1d339a1c73e9485856c0f55
     with:
       project: full-stack-fastapi-template
-      image: ghcr.io/minhduc-it/qc-agent@sha256:d4d447f94f362d21b0199dfa18196f15c1fa96fa6e11935e1b5772c7fdf1adea
+      image: ghcr.io/minhduc-it/qc-agent@sha256:95c55978ec52316e648c07c6f11ff780a930db3950d285504473d43965c6c785
       prd_path: ${{ inputs.prd_path || 'docs/prd/**' }}
       # Dùng Gemini thay Claude: bỏ comment các dòng dưới và đặt secret GEMINI_API_KEY. Chỉ khoá của nhà cung cấp được chọn đi vào container.
       # model: gemini-3.6-flash
