@@ -23,7 +23,7 @@ jobs:
         env:
           GHCR_PULL_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
           GHCR_USER: ${{ github.actor }}
-          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:93d411c67de7b26cd9209b3105def6d23fc0550112590aa382fb42298a8edf5c
+          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:8d87867a641fd38f6e2ea274599d9e5d512a56d4c39a5bccc2c9f30d8aa65c5c
         run: |
           python3 - <<'PY'
           import base64, hashlib, json, os, sys
@@ -68,7 +68,7 @@ jobs:
           password: ${{ secrets.GHCR_PULL_TOKEN }}
       - name: Pull exact image using Docker in caller job
         env:
-          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:93d411c67de7b26cd9209b3105def6d23fc0550112590aa382fb42298a8edf5c
+          IMAGE: ghcr.io/minhduc-it/qc-agent@sha256:8d87867a641fd38f6e2ea274599d9e5d512a56d4c39a5bccc2c9f30d8aa65c5c
         run: |
           docker version
           docker pull "$IMAGE"
@@ -83,7 +83,7 @@ jobs:
     uses: Muteen-Felix/QC-Agent/.github/workflows/qc-gate.reusable.yml@4183af5c3365e493a1d339a1c73e9485856c0f55
     with:
       project: full-stack-fastapi-template
-      image: ghcr.io/minhduc-it/qc-agent@sha256:93d411c67de7b26cd9209b3105def6d23fc0550112590aa382fb42298a8edf5c
+      image: ghcr.io/minhduc-it/qc-agent@sha256:8d87867a641fd38f6e2ea274599d9e5d512a56d4c39a5bccc2c9f30d8aa65c5c
       workers: ${{ inputs.workers }}   # chạy tay: danh sách worker (rỗng = theo policy); PR: luôn rỗng
       sut_dockerfile: ".qc-agent/Dockerfile.ci"
       sut_context: "."
